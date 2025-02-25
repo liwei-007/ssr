@@ -11,16 +11,16 @@ const Home: NextPage = () => {
 
   return (
     <div>
-      <h1>hello，曹骏 and 文涛</h1>
+      <h1>Hello，曹骏 and 文涛，老哥下个月就回高碑店了，改天喝点吧</h1>
       <p className="font-bold">Count: {count}</p>
       <Button
         className="bg-red-500 hover:bg-red-600 text-white"
         onClick={() => dispatch(increment())}
       >
-        Increment
+        同意
       </Button>
-      <Button onClick={() => dispatch(decrement())}>Decrement</Button>
-      <nav>
+      <Button onClick={() => dispatch(decrement())}>不同意</Button>
+      {/* <nav>
         <ul>
           <li>
             <Link href="/">Home</Link>
@@ -29,7 +29,7 @@ const Home: NextPage = () => {
             <Link href="/about">About</Link>
           </li>
         </ul>
-      </nav>
+      </nav> */}
     </div>
   );
 };
