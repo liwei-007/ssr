@@ -1,5 +1,5 @@
 import type { NextPage } from "next";
-import Link from "next/link";
+// import Link from "next/link";
 import { useSelector, useDispatch } from "react-redux";
 import { increment, decrement } from "../store/counterSlice";
 import type { RootState } from "../store";
