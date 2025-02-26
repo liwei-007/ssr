@@ -42,7 +42,7 @@ const Home: NextPage = () => {
           onClick={async () => {
             setLoading(true);
             const response = await getAnswerContent({ input: value });
-            setMessage(response?.message);
+            setMessage(response?.message ?? "");
             setLoading(false);
             console.log(1111, response);
           }}
