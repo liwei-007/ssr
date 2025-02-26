@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
   assetPrefix:
     process.env.NODE_ENV === "production"
       ? "https://read-ssr.oss-cn-hangzhou.aliyuncs.com"
-      : "/",
+      : "",
 };
 
 export default nextConfig;
