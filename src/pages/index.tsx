@@ -65,26 +65,26 @@ const Home: NextPage = () => {
   );
 };
 
-export async function getServerSideProps() {
-  try {
-    // const response = await getAnswerContent();
-    // 发起接口请求
-    // const response = await fetch("https://api.example.com/data");
-    // const data = await response.json();
+// export async function getServerSideProps() {
+//   try {
+//     // const response = await getAnswerContent();
+//     // 发起接口请求
+//     // const response = await fetch("https://api.example.com/data");
+//     // const data = await response.json();
 
-    return {
-      props: {
-        data: {},
-      },
-    };
-  } catch (error) {
-    console.error("接口请求出错:", error);
-    return {
-      props: {
-        data: null,
-      },
-    };
-  }
-}
+//     return {
+//       props: {
+//         data: {},
+//       },
+//     };
+//   } catch (error) {
+//     console.error("接口请求出错:", error);
+//     return {
+//       props: {
+//         data: null,
+//       },
+//     };
+//   }
+// }
 
 export default Home;
