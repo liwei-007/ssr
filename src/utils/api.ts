@@ -11,6 +11,7 @@ async function getAnswerContent({ input }: { input: string }) {
   const completion = await openai.chat.completions.create({
     messages: [{ role: "system", content: input }],
     model: "deepseek-chat",
+    max_tokens: 100,
   });
 
   return {
