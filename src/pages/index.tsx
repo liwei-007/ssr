@@ -1,8 +1,8 @@
 import type { NextPage } from "next";
 // import Link from "next/link";
-import { useSelector, useDispatch } from "react-redux";
+// import { useSelector, useDispatch } from "react-redux";
 // import { increment, decrement } from "../store/counterSlice";
-import type { RootState } from "../store";
+// import type { RootState } from "../store";
 import { Button } from "@/components/ui/button";
 import { getAnswerContent } from "@/utils/api";
 import ReactMarkdown from "@/components/markdown/ReactMarkdown";
@@ -10,7 +10,7 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 
 const Home: NextPage = () => {
-  const count = useSelector((state: RootState) => state.counter.value);
+  // const count = useSelector((state: RootState) => state.counter.value);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState<boolean>(false);
   const [value, setValue] = useState("");
@@ -44,7 +44,6 @@ const Home: NextPage = () => {
             const response = await getAnswerContent({ input: value });
             setMessage(response?.message ?? "");
             setLoading(false);
-            console.log(1111, response);
           }}
         >
           {loading ? "获取中，请稍等。。。" : "获取答案"}

@@ -1,5 +1,4 @@
 import OpenAI from "openai";
-import { useEffect } from "react";
 
 const openai = new OpenAI({
   baseURL: "https://api.deepseek.com",
