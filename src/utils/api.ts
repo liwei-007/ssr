@@ -6,16 +6,23 @@ const openai = new OpenAI({
   dangerouslyAllowBrowser: true,
 });
 
-async function getAnswerContent({ input }: { input: string }) {
-  const completion = await openai.chat.completions.create({
+async function getAnswerContent(
+  input: string,
+  onMessageChunk: (chunk: string) => void
+) {
+  const stream = await openai.chat.completions.create({
     messages: [{ role: "system", content: input }],
     model: "deepseek-chat",
     max_tokens: 100,
+    stream: true,
   });
 
-  return {
-    message: completion.choices[0].message.content,
-  };
+  for await (const part of stream) {
+    const content = part.choices[0]?.delta?.content;
+    if (content) {
+      onMessageChunk(content);
+    }
+  }
 }
 
 export { getAnswerContent };

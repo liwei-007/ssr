@@ -16,6 +16,16 @@ const Home: NextPage = () => {
   const [value, setValue] = useState("");
   // const dispatch = useDispatch();
 
+  const onMessageChunk = (chunk: string) => {
+    setMessage((prevAnswer) => prevAnswer + chunk);
+  };
+
+  const handleFetchData = async () => {
+    setLoading(true);
+    await getAnswerContent(value, onMessageChunk);
+    setLoading(false);
+  };
+
   return (
     <div className="p-4">
       <h1>输入你的问题</h1>
@@ -26,65 +36,39 @@ const Home: NextPage = () => {
           }}
           className="w-96"
         />
-        {/* <p className="font-bold">Count: {count}</p> */}
-        {/* <Button
-        className="bg-red-500 hover:bg-red-600 text-white"
-        onClick={() => dispatch(increment())}
-      >
-        同意
-      </Button>
-      <Button className="m-2" onClick={() => dispatch(decrement())}>
-        不同意
-      </Button> */}
         <Button
           disabled={loading || !value}
           className="m-2"
-          onClick={async () => {
-            setLoading(true);
-            const response = await getAnswerContent({ input: value });
-            setMessage(response?.message ?? "");
-            setLoading(false);
-          }}
+          onClick={handleFetchData}
         >
-          {loading ? "获取中，请稍等。。。" : "获取答案"}
+          {loading ? "生成中，请稍等。。。" : "获取答案"}
         </Button>
       </div>
-
-      {/* <nav>
-        <ul>
-          <li>
-            <Link href="/">Home</Link>
-          </li>
-          <li>
-            <Link href="/about">About</Link>
-          </li>
-        </ul>
-      </nav> */}
       <ReactMarkdown content={message} />
     </div>
   );
 };
 
-// export async function getServerSideProps() {
-//   try {
-//     // const response = await getAnswerContent();
-//     // 发起接口请求
-//     // const response = await fetch("https://api.example.com/data");
-//     // const data = await response.json();
+export async function getServerSideProps() {
+  try {
+    // const response = await getAnswerContent();
+    // 发起接口请求
+    // const response = await fetch("https://api.example.com/data");
+    // const data = await response.json();
 
-//     return {
-//       props: {
-//         data: {},
-//       },
-//     };
-//   } catch (error) {
-//     console.error("接口请求出错:", error);
-//     return {
-//       props: {
-//         data: null,
-//       },
-//     };
-//   }
-// }
+    return {
+      props: {
+        data: {},
+      },
+    };
+  } catch (error) {
+    console.error("接口请求出错:", error);
+    return {
+      props: {
+        data: null,
+      },
+    };
+  }
+}
 
 export default Home;
