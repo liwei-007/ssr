@@ -1,167 +1,178 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
+
+type Position = {
+  x: number;
+  y: number;
+};
+
+type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT";
 
 const GRID_SIZE = 20;
-const CELL_SIZE = 20;
+const INITIAL_SNAKE = [{ x: 10, y: 10 }];
+const INITIAL_FOOD = { x: 15, y: 15 };
 
-const SnakeGame = () => {
-  const [snake, setSnake] = useState([{ x: 10, y: 10 }]);
-  const [food, setFood] = useState({
-    x: Math.floor(Math.random() * GRID_SIZE),
-    y: Math.floor(Math.random() * GRID_SIZE),
-  });
-  const [direction, setDirection] = useState("right");
+export default function SnakeGame() {
+  const [snake, setSnake] = useState<Position[]>(INITIAL_SNAKE);
+  const [food, setFood] = useState<Position>(INITIAL_FOOD);
+  const [direction, setDirection] = useState<Direction>("RIGHT");
   const [gameOver, setGameOver] = useState(false);
-  const intervalRef = useRef<any>(null);
+  const [score, setScore] = useState(0);
 
-  useEffect(() => {
-    const handleKeyDown = (e: any) => {
-      if (e.key === "ArrowUp" && direction !== "down") setDirection("up");
-      if (e.key === "ArrowDown" && direction !== "up") setDirection("down");
-      if (e.key === "ArrowLeft" && direction !== "right") setDirection("left");
-      if (e.key === "ArrowRight" && direction !== "left") setDirection("right");
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [direction]);
-
-  useEffect(() => {
-    const moveSnake = () => {
-      if (gameOver) return;
-
-      let newHead: { x: any; y: any } = {
-        x: null,
-        y: null,
-      };
-      const head = snake[0];
-
-      switch (direction) {
-        case "up":
-          newHead = { x: head.x, y: head.y - 1 };
-          break;
-        case "down":
-          newHead = { x: head.x, y: head.y + 1 };
-          break;
-        case "left":
-          newHead = { x: head.x - 1, y: head.y };
-          break;
-        case "right":
-          newHead = { x: head.x + 1, y: head.y };
-          break;
-        default:
-          break;
-      }
-
-      // 检查是否吃到食物
-      if (newHead.x === food.x && newHead.y === food.y) {
-        setFood({
-          x: Math.floor(Math.random() * GRID_SIZE),
-          y: Math.floor(Math.random() * GRID_SIZE),
-        });
-      } else {
-        // 移除蛇尾
-        snake.pop();
-      }
-
-      // 检查是否撞到墙壁或自己
-      if (
-        newHead.x < 0 ||
-        newHead.x >= GRID_SIZE ||
-        newHead.y < 0 ||
-        newHead.y >= GRID_SIZE ||
-        snake.some(
-          (segment) => segment.x === newHead.x && segment.y === newHead.y
-        )
-      ) {
-        setGameOver(true);
-        return;
-      }
-
-      // 添加新的蛇头
-      setSnake([newHead, ...snake]);
-    };
-
-    intervalRef.current = setInterval(moveSnake, 200);
-
-    return () => {
-      clearInterval(intervalRef.current);
-    };
-  }, [snake, direction, food, gameOver]);
-
-  const restartGame = () => {
-    setSnake([{ x: 10, y: 10 }]);
-    setFood({
+  // 生成新食物
+  const generateFood = useCallback(() => {
+    const newFood = {
       x: Math.floor(Math.random() * GRID_SIZE),
       y: Math.floor(Math.random() * GRID_SIZE),
+    };
+    setFood(newFood);
+  }, []);
+
+  // 游戏逻辑
+  const moveSnake = useCallback(() => {
+    if (gameOver) return;
+
+    setSnake((prevSnake) => {
+      const newSnake = [...prevSnake];
+      const head = { ...newSnake[0] };
+
+      switch (direction) {
+        case "UP":
+          head.y = head.y - 1;
+          break;
+        case "DOWN":
+          head.y = head.y + 1;
+          break;
+        case "LEFT":
+          head.x = head.x - 1;
+          break;
+        case "RIGHT":
+          head.x = head.x + 1;
+          break;
+      }
+
+      // 边框碰撞检测
+      if (
+        head.x < 0 ||
+        head.x >= GRID_SIZE ||
+        head.y < 0 ||
+        head.y >= GRID_SIZE
+      ) {
+        setGameOver(true);
+        return prevSnake;
+      }
+
+      // 自身碰撞检测
+      if (
+        newSnake.some((segment) => segment.x === head.x && segment.y === head.y)
+      ) {
+        setGameOver(true);
+        return prevSnake;
+      }
+
+      newSnake.unshift(head);
+
+      // 吃食物检测
+      if (head.x === food.x && head.y === food.y) {
+        setScore((s) => s + 1);
+        generateFood();
+      } else {
+        newSnake.pop();
+      }
+
+      return newSnake;
     });
-    setDirection("right");
+  }, [direction, food.x, food.y, gameOver, generateFood]);
+
+  // 键盘控制
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      switch (e.key) {
+        case "ArrowUp":
+          setDirection((prev) => (prev !== "DOWN" ? "UP" : prev));
+          break;
+        case "ArrowDown":
+          setDirection((prev) => (prev !== "UP" ? "DOWN" : prev));
+          break;
+        case "ArrowLeft":
+          setDirection((prev) => (prev !== "RIGHT" ? "LEFT" : prev));
+          break;
+        case "ArrowRight":
+          setDirection((prev) => (prev !== "LEFT" ? "RIGHT" : prev));
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
+  }, []);
+
+  // 游戏循环
+  useEffect(() => {
+    const gameInterval = setInterval(moveSnake, 150);
+    return () => clearInterval(gameInterval);
+  }, [moveSnake]);
+
+  // 重置游戏
+  const resetGame = () => {
+    setSnake(INITIAL_SNAKE);
+    setFood(INITIAL_FOOD);
+    setDirection("RIGHT");
     setGameOver(false);
+    setScore(0);
+    generateFood();
   };
 
   return (
-    <div className="relative">
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center">
+      <div className="mb-4 text-2xl font-bold text-gray-800">得分: {score}</div>
+
       <div
-        className="grid grid-cols-[repeat(20,20px)] grid-rows-[repeat(20,20px)] gap-0 border border-gray-300"
-        style={{
-          width: `${GRID_SIZE * CELL_SIZE}px`,
-          height: `${GRID_SIZE * CELL_SIZE}px`,
-        }}
+        className="relative bg-white border-4 border-gray-300 rounded-lg"
+        style={{ width: `${GRID_SIZE * 20}px`, height: `${GRID_SIZE * 20}px` }}
       >
-        {Array.from({ length: GRID_SIZE * GRID_SIZE }, (_, index) => {
-          const x = index % GRID_SIZE;
-          const y = Math.floor(index / GRID_SIZE);
+        {/* 蛇 */}
+        {snake.map((segment, index) => (
+          <div
+            key={index}
+            className="absolute bg-green-500 rounded-sm"
+            style={{
+              width: "20px",
+              height: "20px",
+              left: `${segment.x * 20}px`,
+              top: `${segment.y * 20}px`,
+              zIndex: 10,
+            }}
+          />
+        ))}
 
-          const isSnakeSegment = snake.some(
-            (segment) => segment.x === x && segment.y === y
-          );
-          const isSnakeHead = snake[0].x === x && snake[0].y === y;
+        {/* 食物 */}
+        <div
+          className="absolute bg-red-500 rounded-full animate-pulse"
+          style={{
+            width: "16px",
+            height: "16px",
+            left: `${food.x * 20 + 2}px`,
+            top: `${food.y * 20 + 2}px`,
+          }}
+        />
 
-          if (isSnakeSegment) {
-            return (
-              <div
-                key={index}
-                className={`${
-                  isSnakeHead ? "bg-green-600" : "bg-green-400"
-                } rounded-md shadow-md`}
-                style={{ width: `${CELL_SIZE}px`, height: `${CELL_SIZE}px` }}
-              />
-            );
-          }
-
-          if (food.x === x && food.y === y) {
-            return (
-              <div
-                key={index}
-                className="bg-red-500 rounded-full shadow-md"
-                style={{ width: `${CELL_SIZE}px`, height: `${CELL_SIZE}px` }}
-              />
-            );
-          }
-
-          return (
-            <div
-              key={index}
-              style={{ width: `${CELL_SIZE}px`, height: `${CELL_SIZE}px` }}
-            />
-          );
-        })}
+        {/* 游戏结束提示 */}
+        {gameOver && (
+          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-lg">
+            <div className="text-white text-2xl font-bold">
+              游戏结束！
+              <button
+                onClick={resetGame}
+                className="block mt-4 px-4 py-2 bg-green-500 rounded hover:bg-green-600 transition-colors"
+              >
+                再玩一次
+              </button>
+            </div>
+          </div>
+        )}
       </div>
-      {gameOver && (
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-4 rounded-md text-center">
-          <p className="text-red-500 font-bold">Game Over!</p>
-          <button
-            className="mt-2 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
-            onClick={restartGame}
-          >
-            Restart
-          </button>
-        </div>
-      )}
+
+      <div className="mt-4 text-gray-600 text-sm">使用方向键控制移动</div>
     </div>
   );
-};
-
-export default SnakeGame;
+}
