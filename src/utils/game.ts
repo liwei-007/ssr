@@ -2,9 +2,9 @@ import { GameScene } from "@/types/game";
 import OpenAI from "openai";
 
 const openai = new OpenAI({
-  //   apiKey: process.env.NEXT_PUBLIC_OPENAI_KEY,
+  apiKey: process.env.NEXT_PUBLIC_OPENAI_KEY,
   baseURL: "https://api.deepseek.com",
-  apiKey: "sk-b741625a0a084b3195803bff0cb66327",
+  //   apiKey: "sk-b741625a0a084b3195803bff0cb66327",
   dangerouslyAllowBrowser: true,
 });
 

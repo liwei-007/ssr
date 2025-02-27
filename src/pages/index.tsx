@@ -1,98 +1,123 @@
-"use client";
-import { useState, useEffect } from "react";
-import { GameState } from "@/types/game";
-import { generateScene } from "@/utils/game";
+import type { NextPage } from "next";
+import Link from "next/link";
+// import { useSelector, useDispatch } from "react-redux";
+// import { increment, decrement } from "../store/counterSlice";
+// import type { RootState } from "../store";
 import { Button } from "@/components/ui/button";
+import { getAnswerContent } from "@/utils/api";
+import ReactMarkdown from "@/components/markdown/ReactMarkdown";
+import { useState } from "react";
+import { Input } from "@/components/ui/input";
 
-export default function GamePage() {
-  const [gameState, setGameState] = useState<GameState>({
-    scene: {
-      description: "你站在一个神秘森林的入口...",
-      options: [],
-    },
-    health: 100,
-    level: 1,
-  });
+const Home: NextPage = () => {
+  // const count = useSelector((state: RootState) => state.counter.value);
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [value, setValue] = useState("");
+  // const dispatch = useDispatch();
 
-  const [isLoading, setIsLoading] = useState(false);
-
-  // 初始化第一个场景
-  useEffect(() => {
-    if (gameState.scene.options.length === 0) {
-      generateInitialScene();
-    }
-  }, []);
-
-  const generateInitialScene = async () => {
-    setIsLoading(true);
-    try {
-      const newScene = await generateScene("游戏开始");
-      setGameState((prev) => ({
-        ...prev,
-        scene: newScene,
-      }));
-    } finally {
-      setIsLoading(false);
-    }
+  const onMessageChunk = (chunk: string) => {
+    setMessage((prevAnswer) => prevAnswer + chunk);
   };
 
-  const handleChoice = async (optionId: number) => {
-    setIsLoading(true);
-    try {
-      const newScene = await generateScene(`
-        当前状态: 等级 ${gameState.level} / 生命 ${gameState.health}
-        最后选择: ${optionId}
-      `);
-
-      setGameState((prev) => ({
-        ...prev,
-        scene: newScene,
-        health: prev.health - Math.floor(Math.random() * 10), // 简单扣血机制
-        level: prev.level + 1,
-      }));
-    } catch (error) {
-      console.error("生成失败:", error);
-    } finally {
-      setIsLoading(false);
-    }
+  const handleFetchData = async () => {
+    setLoading(true);
+    await getAnswerContent(value, onMessageChunk);
+    setLoading(false);
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
-      <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-6">
-        {/* 状态栏 */}
-        <div className="mb-6 flex gap-4 text-lg">
-          <div>❤️ 生命: {gameState.health}</div>
-          <div>⭐ 等级: {gameState.level}</div>
-        </div>
-
-        {/* 场景描述 */}
-        <div className="mb-6 p-4 bg-blue-50 rounded-lg">
-          <p className="text-gray-800">{gameState.scene.description}</p>
-        </div>
-
-        {/* 选项按钮 */}
-        <div className="space-y-3">
-          {gameState.scene.options.map((option) => (
-            <Button
-              key={option.id}
-              onClick={() => handleChoice(option.id)}
-              disabled={isLoading}
-              className="w-full p-3 bg-blue-500 text-white rounded-lg
-                       hover:bg-blue-600 transition-colors
-                       disabled:bg-gray-300 disabled:cursor-not-allowed"
-            >
-              {option.text}
-            </Button>
-          ))}
-        </div>
-
-        {isLoading && (
-          <div className="mt-4 text-center text-gray-500">
-            AI 正在生成剧情...
-          </div>
-        )}
+    <div className="p-4">
+      <h1>知识问答</h1>
+      <div className="flex items-center">
+        <Input
+          onChange={(evt) => {
+            setValue(evt.target?.value);
+          }}
+          className="w-96"
+        />
+        <Button
+          disabled={loading || !value}
+          className="m-2"
+          onClick={handleFetchData}
+        >
+          {loading ? "生成中，请稍等。。。" : "获取答案"}
+        </Button>
+      </div>
+      <ReactMarkdown content={message} />
+      <div className="bg-white shadow-lg p-2">
+        <h1 className="mt-10">游戏专区</h1>
+        <nav>
+          <ul className="flex flex-col md:flex-row gap-4 p-6">
+            <li className="relative group">
+              <Link
+                href="/ai-game"
+                className="flex items-center px-6 py-3 text-gray-700 hover:bg-emerald-50 rounded-lg 
+                 transition-all duration-300 group-hover:scale-[1.02]
+                 before:absolute before:-bottom-1 before:h-0.5 before:w-0 
+                 before:bg-emerald-500 before:transition-all before:duration-300
+                 hover:before:w-full hover:text-emerald-600
+                 focus:outline-none focus:ring-2 focus:ring-emerald-300 before:left-0"
+              >
+                <span className="mr-2">🌿</span>
+                丛林探险
+              </Link>
+            </li>
+            <li className="relative group">
+              <Link
+                href="/game"
+                className="flex items-center px-6 py-3 text-gray-700 hover:bg-amber-50 rounded-lg 
+                 transition-all duration-300 group-hover:scale-[1.02]
+                 before:absolute before:-bottom-1 before:h-0.5 before:w-0 
+                 before:bg-amber-400 before:transition-all before:duration-300
+                 hover:before:w-full hover:text-amber-600
+                 focus:outline-none focus:ring-1 focus:ring-amber-300 before:left-0"
+              >
+                <span className="mr-2">🐍</span>
+                贪吃蛇
+              </Link>
+            </li>
+            <li className="relative group">
+              <Link
+                href="/gold-miner-game"
+                className="flex items-center px-6 py-3 text-gray-700 hover:bg-amber-100 rounded-lg 
+                 transition-all duration-300 group-hover:scale-[1.02]
+                 before:absolute before:-bottom-1 before:h-0.5 before:w-0 
+                 before:bg-amber-600 before:transition-all before:duration-300
+                 hover:before:w-full hover:text-amber-800
+                 focus:outline-none focus:ring-1 focus:ring-amber-400 before:left-0"
+              >
+                <span className="mr-2">⚒️</span>
+                黄金矿工
+              </Link>
+            </li>
+          </ul>
+        </nav>
       </div>
     </div>
   );
+};
+
+export async function getServerSideProps() {
+  try {
+    // const response = await getAnswerContent();
+    // 发起接口请求
+    // const response = await fetch("https://api.example.com/data");
+    // const data = await response.json();
+
+    return {
+      props: {
+        data: {},
+      },
+    };
+  } catch (error) {
+    console.error("接口请求出错:", error);
+    return {
+      props: {
+        data: null,
+      },
+    };
+  }
 }
+
+export default Home;
