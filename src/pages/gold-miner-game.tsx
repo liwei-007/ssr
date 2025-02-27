@@ -103,7 +103,7 @@ const GoldMinerGame = () => {
         }
       } else {
         if (!isGameOver) {
-          let newAngle = ropeAngle + direction * 1;
+          const newAngle = ropeAngle + direction * 1;
           if (newAngle >= 45 || newAngle <= -45) {
             setDirection((prevDirection) => -prevDirection);
           }
