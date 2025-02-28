@@ -4,16 +4,25 @@ import Link from "next/link";
 // import { increment, decrement } from "../store/counterSlice";
 // import type { RootState } from "../store";
 import { Button } from "@/components/ui/button";
-import { getAnswerContent } from "@/utils/api";
+import { getAnswerContent, type ModelType } from "@/utils/api";
 import ReactMarkdown from "@/components/markdown/ReactMarkdown";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const Home: NextPage = () => {
   // const count = useSelector((state: RootState) => state.counter.value);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState<boolean>(false);
   const [value, setValue] = useState("");
+  const [model, setModel] = useState<ModelType>("qwen-plus");
   // const dispatch = useDispatch();
 
   const onMessageChunk = (chunk: string) => {
@@ -23,13 +32,32 @@ const Home: NextPage = () => {
   const handleFetchData = async () => {
     setLoading(true);
     setMessage("");
-    await getAnswerContent(value, onMessageChunk);
+    await getAnswerContent(value, model, onMessageChunk);
     setLoading(false);
   };
 
   return (
     <div className="p-4">
-      <h1>知识问答</h1>
+      <h1 className="flex items-center mb-2">
+        <span className="mr-2">知识问答</span>
+        <Select
+          onValueChange={(v: ModelType) => {
+            setModel(v);
+          }}
+          defaultValue="qwen-plus"
+        >
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="模型选择" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem value="deepseek-chat">Deepseek</SelectItem>
+              <SelectItem value="qwen-plus">通义千问</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </h1>
+
       <div className="flex items-center">
         <Input
           onChange={(evt) => {
