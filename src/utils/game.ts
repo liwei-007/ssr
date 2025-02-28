@@ -2,7 +2,7 @@ import { GameScene } from "@/types/game";
 import OpenAI from "openai";
 
 const openai = new OpenAI({
-  apiKey: process.env.NEXT_PUBLIC_OPENAI_KEY,
+  apiKey: process.env.NEXT_PUBLIC_QWEN_KEY,
   //   baseURL: "https://api.deepseek.com",
   baseURL: "https://dashscope.aliyuncs.com/compatible-mode/v1",
   dangerouslyAllowBrowser: true,
