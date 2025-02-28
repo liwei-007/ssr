@@ -16,13 +16,10 @@ const service = axios.create({
 service.interceptors.request.use(
   (config: AxiosRequestConfig | any) => {
     // 在发送请求之前做些什么，例如添加 token
-    const token = localStorage.getItem("token");
-    if (token) {
-      config.headers = {
-        ...config.headers,
-        Authorization: `Bearer ${token}`,
-      };
-    }
+    config.headers = {
+      ...config.headers,
+    };
+    console.log("header", config.headers);
     return config;
   },
   (error: AxiosError) => {

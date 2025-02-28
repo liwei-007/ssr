@@ -116,6 +116,15 @@ const Home: NextPage = () => {
                 GitHub关键词搜索
               </Link>
             </li>
+            <li className="flex-1">
+              <Link
+                href="/text-to-image"
+                className="block bg-white border border-gray-300 rounded-md py-4 px-6 text-center text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-amber-300"
+              >
+                <span className="block text-2xl mb-2">🔧</span>
+                图像生成
+              </Link>
+            </li>
           </ul>
         </nav>
       </div>

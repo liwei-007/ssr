@@ -16,7 +16,7 @@ const GitHubSearch: React.FC = () => {
     method: "POST",
     params: {
       input: {
-        prompt: `以 markdown 列表带样式的形式输出 github 搜索列表 { keyword: ${searchQuery} }`,
+        prompt: `以 markdown 列表带样式的形式输出 github 搜索列表 { keyword: ${searchQuery} }，只包含列表部分并且链接处加粗展示`,
       },
     },
     headers: {
