@@ -84,6 +84,32 @@ const Home: NextPage = () => {
           <ReactMarkdown content={message} />
         </div>
       )}
+      {/* 工具专区 */}
+      <div className="bg-white p-6 rounded-md shadow-md">
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">工具专区</h2>
+        <nav>
+          <ul className="flex flex-col md:flex-row gap-4">
+            <li className="flex-1">
+              <Link
+                href="/qcode"
+                className="block bg-white border border-gray-300 rounded-md py-4 px-6 text-center text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-amber-300"
+              >
+                <span className="block text-2xl mb-2">📖</span>
+                二维码生成
+              </Link>
+            </li>
+            <li className="flex-1">
+              <Link
+                href="/delivery"
+                className="block bg-white border border-gray-300 rounded-md py-4 px-6 text-center text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-amber-300"
+              >
+                <span className="block text-2xl mb-2">📦</span>
+                快递查询
+              </Link>
+            </li>
+          </ul>
+        </nav>
+      </div>
 
       {/* 游戏专区 */}
       <div className="bg-white p-6 rounded-md shadow-md">
