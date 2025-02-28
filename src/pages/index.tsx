@@ -1,8 +1,5 @@
 import type { NextPage } from "next";
 import Link from "next/link";
-// import { useSelector, useDispatch } from "react-redux";
-// import { increment, decrement } from "../store/counterSlice";
-// import type { RootState } from "../store";
 import { Button } from "@/components/ui/button";
 import { getAnswerContent, type ModelType } from "@/utils/api";
 import ReactMarkdown from "@/components/markdown/ReactMarkdown";
@@ -18,12 +15,10 @@ import {
 } from "@/components/ui/select";
 
 const Home: NextPage = () => {
-  // const count = useSelector((state: RootState) => state.counter.value);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState<boolean>(false);
   const [value, setValue] = useState("");
   const [model, setModel] = useState<ModelType>("qwen-plus");
-  // const dispatch = useDispatch();
 
   const onMessageChunk = (chunk: string) => {
     setMessage((prevAnswer) => prevAnswer + chunk);
@@ -37,86 +32,88 @@ const Home: NextPage = () => {
   };
 
   return (
-    <div className="p-4">
-      <h1 className="flex items-center mb-2">
-        <span className="mr-2">知识问答</span>
-        <Select
-          onValueChange={(v: ModelType) => {
-            setModel(v);
-          }}
-          defaultValue="qwen-plus"
-        >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="模型选择" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectItem value="deepseek-chat">Deepseek</SelectItem>
-              <SelectItem value="qwen-plus">通义千问</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-      </h1>
+    <div className="p-8 bg-gray-100 min-h-screen">
+      {/* 标题和模型选择区域 */}
+      <div className="flex justify-between items-center mb-8">
+        <h2 className="text-2xl font-bold text-gray-800">知识问答</h2>
+        <div className="w-48">
+          <Select
+            onValueChange={(v: ModelType) => {
+              setModel(v);
+            }}
+            defaultValue="qwen-plus"
+          >
+            <SelectTrigger className="w-full bg-white border border-gray-300 rounded-md py-2 px-3 shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500">
+              <SelectValue placeholder="模型选择" />
+            </SelectTrigger>
+            <SelectContent className="border border-gray-300 rounded-md shadow-lg">
+              <SelectGroup>
+                <SelectItem value="deepseek-chat">Deepseek</SelectItem>
+                <SelectItem value="qwen-plus">通义千问</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
 
-      <div className="flex items-center">
+      {/* 输入框和按钮区域 */}
+      <div className="flex items-center space-x-4 mb-8">
         <Input
           onChange={(evt) => {
             setValue(evt.target?.value);
           }}
-          className="w-96"
+          className="flex-1 bg-white border border-gray-300 rounded-md py-2 px-3 shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+          placeholder="请输入问题"
         />
         <Button
           disabled={loading || !value}
-          className="m-2"
+          className={`${
+            loading
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-emerald-500 hover:bg-emerald-600"
+          } text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-300`}
           onClick={handleFetchData}
         >
           {loading ? "生成中，请稍等。。。" : "获取答案"}
         </Button>
       </div>
-      <ReactMarkdown content={message} />
-      <div className="bg-white shadow-lg p-2">
-        <h1 className="mt-10">游戏专区</h1>
+
+      {/* 答案展示区域 */}
+      {message && (
+        <div className="bg-white p-6 rounded-md shadow-md mb-8">
+          <ReactMarkdown content={message} />
+        </div>
+      )}
+
+      {/* 游戏专区 */}
+      <div className="bg-white p-6 rounded-md shadow-md">
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">游戏专区</h2>
         <nav>
-          <ul className="flex flex-col md:flex-row gap-4 p-6">
-            <li className="relative group">
+          <ul className="flex flex-col md:flex-row gap-4">
+            <li className="flex-1">
               <Link
                 href="/ai-game"
-                className="flex items-center px-6 py-3 text-gray-700 hover:bg-emerald-50 rounded-lg 
-                 transition-all duration-300 group-hover:scale-[1.02]
-                 before:absolute before:-bottom-1 before:h-0.5 before:w-0 
-                 before:bg-emerald-500 before:transition-all before:duration-300
-                 hover:before:w-full hover:text-emerald-600
-                 focus:outline-none focus:ring-2 focus:ring-emerald-300 before:left-0"
+                className="block bg-white border border-gray-300 rounded-md py-4 px-6 text-center text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-emerald-300"
               >
-                <span className="mr-2">🌿</span>
+                <span className="block text-2xl mb-2">🌿</span>
                 丛林探险
               </Link>
             </li>
-            <li className="relative group">
+            <li className="flex-1">
               <Link
                 href="/game"
-                className="flex items-center px-6 py-3 text-gray-700 hover:bg-amber-50 rounded-lg 
-                 transition-all duration-300 group-hover:scale-[1.02]
-                 before:absolute before:-bottom-1 before:h-0.5 before:w-0 
-                 before:bg-amber-400 before:transition-all before:duration-300
-                 hover:before:w-full hover:text-amber-600
-                 focus:outline-none focus:ring-1 focus:ring-amber-300 before:left-0"
+                className="block bg-white border border-gray-300 rounded-md py-4 px-6 text-center text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-amber-300"
               >
-                <span className="mr-2">🐍</span>
+                <span className="block text-2xl mb-2">🐍</span>
                 贪吃蛇
               </Link>
             </li>
-            <li className="relative group">
+            <li className="flex-1">
               <Link
                 href="/gold-miner-game"
-                className="flex items-center px-6 py-3 text-gray-700 hover:bg-amber-100 rounded-lg 
-                 transition-all duration-300 group-hover:scale-[1.02]
-                 before:absolute before:-bottom-1 before:h-0.5 before:w-0 
-                 before:bg-amber-600 before:transition-all before:duration-300
-                 hover:before:w-full hover:text-amber-800
-                 focus:outline-none focus:ring-1 focus:ring-amber-400 before:left-0"
+                className="block bg-white border border-gray-300 rounded-md py-4 px-6 text-center text-gray-700 hover:bg-amber-100 hover:text-amber-800 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-amber-400"
               >
-                <span className="mr-2">⚒️</span>
+                <span className="block text-2xl mb-2">⚒️</span>
                 黄金矿工
               </Link>
             </li>
@@ -129,11 +126,6 @@ const Home: NextPage = () => {
 
 export async function getServerSideProps() {
   try {
-    // const response = await getAnswerContent();
-    // 发起接口请求
-    // const response = await fetch("https://api.example.com/data");
-    // const data = await response.json();
-
     return {
       props: {
         data: {},
