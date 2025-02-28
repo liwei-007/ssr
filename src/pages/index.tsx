@@ -22,6 +22,7 @@ const Home: NextPage = () => {
 
   const handleFetchData = async () => {
     setLoading(true);
+    setMessage("");
     await getAnswerContent(value, onMessageChunk);
     setLoading(false);
   };

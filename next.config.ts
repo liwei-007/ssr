@@ -8,7 +8,8 @@ const nextConfig: NextConfig = {
   //     ? "https://read-ssr.oss-cn-hangzhou.aliyuncs.com"
   //     : "",
   env: {
-    NEXT_PUBLIC_OPENAI_KEY: "sk-b741625a0a084b3195803bff0cb66327",
+    // NEXT_PUBLIC_OPENAI_KEY: "sk-b741625a0a084b3195803bff0cb66327", // deepseek
+    NEXT_PUBLIC_OPENAI_KEY: "sk-a617d9a5934742f692defb0d8d7b6782", // 通义千问
   },
 };
 

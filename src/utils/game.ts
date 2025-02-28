@@ -3,8 +3,8 @@ import OpenAI from "openai";
 
 const openai = new OpenAI({
   apiKey: process.env.NEXT_PUBLIC_OPENAI_KEY,
-  baseURL: "https://api.deepseek.com",
-  //   apiKey: "sk-b741625a0a084b3195803bff0cb66327",
+  //   baseURL: "https://api.deepseek.com",
+  baseURL: "https://dashscope.aliyuncs.com/compatible-mode/v1",
   dangerouslyAllowBrowser: true,
 });
 
@@ -23,7 +23,7 @@ export const generateScene = async (context: string): Promise<GameScene> => {
   }`;
 
   const response = await openai.chat.completions.create({
-    model: "deepseek-chat",
+    model: "qwen-plus",
     messages: [{ role: "user", content: prompt }],
     temperature: 0.7,
     response_format: {

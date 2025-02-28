@@ -1,7 +1,8 @@
 import OpenAI from "openai";
 
 const openai = new OpenAI({
-  baseURL: "https://api.deepseek.com",
+  // baseURL: "https://api.deepseek.com",
+  baseURL: "https://dashscope.aliyuncs.com/compatible-mode/v1",
   apiKey: process.env.NEXT_PUBLIC_OPENAI_KEY,
   dangerouslyAllowBrowser: true,
 });
@@ -12,7 +13,8 @@ async function getAnswerContent(
 ) {
   const stream = await openai.chat.completions.create({
     messages: [{ role: "system", content: input }],
-    model: "deepseek-chat",
+    // model: "deepseek-chat",
+    model: "qwen-plus",
     max_tokens: 100,
     stream: true,
   });
