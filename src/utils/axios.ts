@@ -1,10 +1,11 @@
 import axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from "axios";
 
+const baseURL =
+  "https://dashscope.aliyuncs.com/api/v1/apps/d7045172f58049279283515fa53f98bd/completion";
+
 // 创建 axios 实例
 const service = axios.create({
-  baseURL:
-    process.env.REACT_APP_API_BASE_URL ||
-    "https://dashscope.aliyuncs.com/api/v1/apps/d7045172f58049279283515fa53f98bd/completion", // 你的 API 基础 URL
+  baseURL,
   timeout: 60000, // 请求超时时间
   headers: {
     "Content-Type": "application/json",

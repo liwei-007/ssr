@@ -1,7 +1,7 @@
 import request from "@/utils/axios";
 let intervalId: NodeJS.Timeout;
 const handler = async (
-  req: { body: any; method: "POST" | "GET" },
+  req: { body: any; method: "POST" | "GET"; headers: any },
   res: {
     status: (arg0: number) => {
       (): any;
@@ -13,19 +13,15 @@ const handler = async (
   if (req?.method == "POST") {
     try {
       const jsonData = JSON.parse(req?.body);
+      console.log(111111, req?.body);
       try {
         // 发送初始的文本到图像合成请求
         const response = await request.post<{ output: { task_id: string } }>(
           "https://dashscope.aliyuncs.com/api/v1/services/aigc/text2image/image-synthesis",
           {
-            input: {
-              prompt: jsonData?.context,
-            },
-            parameters: {
-              size: "1024*1024",
-              n: 1,
-            },
-            model: "wanx2.1-t2i-turbo",
+            input: jsonData?.input,
+            parameters: jsonData?.parameters ?? {},
+            model: jsonData?.model ?? "wanx2.1-t2i-turbo",
           },
           {
             headers: {
@@ -33,6 +29,8 @@ const handler = async (
             },
           }
         );
+
+        console.log(2222, response?.output);
 
         // 检查是否成功获取任务 ID
         if (response?.output?.task_id) {
@@ -56,7 +54,7 @@ const handler = async (
                     resolve(data);
                   } else if (data?.output?.task_status === "FAILED") {
                     clearInterval(intervalId);
-                    reject(new Error("Task failed"));
+                    resolve(data);
                   }
                 } catch (error) {
                   clearInterval(intervalId);

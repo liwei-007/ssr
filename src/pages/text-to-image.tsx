@@ -14,7 +14,13 @@ const ImageSearch: React.FC = () => {
     const response = await fetch(`/api/textToImage`, {
       method: "POST",
       body: JSON.stringify({
-        context: searchQuery,
+        input: {
+          prompt: searchQuery,
+        },
+        parameters: {
+          size: "1024*1024",
+          n: 1,
+        },
       }),
     });
     if (!response.ok) {
@@ -27,28 +33,32 @@ const ImageSearch: React.FC = () => {
 
   return (
     <div className="flex flex-col p-10 h-screen">
+      <h1 className="text-3xl font-bold text-gray-800 mb-4">文生图</h1>
       <form onSubmit={handleSubmit} className="flex space-x-4 mb-8">
         <Input
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="请输入图片描述"
-          className="w-96 border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
         />
-        <Button
-          disabled={!searchQuery || loading}
-          type="submit"
-          className="bg-blue-500 text-white rounded-md px-6 py-2 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
-        >
+        <Button disabled={!searchQuery || loading} type="submit">
           {loading ? "生成中，请稍后..." : "提交"}
         </Button>
       </form>
       {/* 答案展示区域 */}
       {imageUrl && (
-        <div className="bg-white p-6 rounded-md shadow-md mb-8 w-96 h-96 relative">
-          {/* <Image src={imageUrl} fill objectFit="cover" alt="" /> */}
-          <img src={imageUrl} alt="" />
-        </div>
+        <>
+          <div className="bg-white p-6 rounded-md shadow-md mb-8 w-96 h-96 relative">
+            {/* <Image src={imageUrl} fill objectFit="cover" alt="" /> */}
+            <img src={imageUrl} alt="" />
+          </div>
+          <a
+            href={imageUrl}
+            className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 mt-4 flex justify-center w-20"
+          >
+            下载
+          </a>
+        </>
       )}
     </div>
   );

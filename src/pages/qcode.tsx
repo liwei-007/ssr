@@ -24,19 +24,15 @@ const ImageSearch: React.FC = () => {
 
   return (
     <div className="flex flex-col p-10 h-screen">
+      <h1 className="text-3xl font-bold text-gray-800 mb-4">二维码生成</h1>
       <form onSubmit={handleSubmit} className="flex space-x-4 mb-8">
         <Input
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="请输入 URL"
-          className="w-96 border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
         />
-        <Button
-          disabled={!searchQuery || loading}
-          type="submit"
-          className="bg-blue-500 text-white rounded-md px-6 py-2 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
-        >
+        <Button disabled={!searchQuery || loading} type="submit">
           {loading ? "生成中，请稍后..." : "提交"}
         </Button>
       </form>

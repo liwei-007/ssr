@@ -65,15 +65,7 @@ const Home: NextPage = () => {
           className="flex-1 bg-white border border-gray-300 rounded-md py-2 px-3 shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
           placeholder="请输入问题"
         />
-        <Button
-          disabled={loading || !value}
-          className={`${
-            loading
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-emerald-500 hover:bg-emerald-600"
-          } text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-300`}
-          onClick={handleFetchData}
-        >
+        <Button disabled={loading || !value} onClick={handleFetchData}>
           {loading ? "生成中，请稍等。。。" : "获取答案"}
         </Button>
       </div>
@@ -85,8 +77,8 @@ const Home: NextPage = () => {
         </div>
       )}
       {/* 工具专区 */}
-      <div className="bg-white p-6 rounded-md shadow-md">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">工具专区</h2>
+      <div className="bg-white p-6 rounded-md shadow-md mb-4">
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">效率工具</h2>
         <nav>
           <ul className="flex flex-col md:flex-row gap-4">
             <li className="flex-1">
@@ -116,19 +108,35 @@ const Home: NextPage = () => {
                 GitHub关键词搜索
               </Link>
             </li>
+          </ul>
+        </nav>
+      </div>
+      {/* 图像专区 */}
+      <div className="bg-white p-6 rounded-md shadow-md mb-4">
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">图像生成</h2>
+        <nav>
+          <ul className="flex flex-col md:flex-row gap-4">
             <li className="flex-1">
               <Link
                 href="/text-to-image"
                 className="block bg-white border border-gray-300 rounded-md py-4 px-6 text-center text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-amber-300"
               >
                 <span className="block text-2xl mb-2">🔧</span>
-                图像生成
+                文字生成图片
+              </Link>
+            </li>
+            <li className="flex-1">
+              <Link
+                href="/placard"
+                className="block bg-white border border-gray-300 rounded-md py-4 px-6 text-center text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-amber-300"
+              >
+                <span className="block text-2xl mb-2">🎬</span>
+                海报生成
               </Link>
             </li>
           </ul>
         </nav>
       </div>
-
       {/* 游戏专区 */}
       <div className="bg-white p-6 rounded-md shadow-md">
         <h2 className="text-2xl font-bold text-gray-800 mb-4">游戏专区</h2>
