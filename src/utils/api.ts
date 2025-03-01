@@ -46,7 +46,7 @@ async function getAnswerContent(
   const stream = await openai.chat.completions.create({
     messages: [{ role: "system", content: input }],
     model: model, // 直接使用传入的 model 参数
-    max_tokens: 100,
+    // max_tokens: 100,
     stream: true,
   });
 
