@@ -2,7 +2,11 @@ import OpenAI from "openai";
 import { ChatCompletionContentPart } from "openai/resources/chat/completions.mjs";
 
 // 类型定义
-type ModelType = "deepseek-chat" | "qwen-plus" | "qwen-vl-ocr";
+type ModelType =
+  | "deepseek-chat"
+  | "qwen-plus"
+  | "qwen-vl-ocr"
+  | "hunyuan-turbo";
 type ModelConfig = {
   baseURL: string;
   apiKey: string;
@@ -21,6 +25,10 @@ const MODEL_CONFIGS: Record<ModelType, ModelConfig> = {
     baseURL: "https://dashscope.aliyuncs.com/compatible-mode/v1",
     apiKey: process.env.NEXT_PUBLIC_QWEN_KEY!,
   },
+  "hunyuan-turbo": {
+    baseURL: "https://api.hunyuan.cloud.tencent.com/v1",
+    apiKey: process.env.NEXT_PUBLIC_HUNYUAN_KEY!,
+  },
 };
 
 // 实例缓存对象
@@ -28,6 +36,7 @@ const openAIClients: Record<ModelType, OpenAI | null> = {
   "deepseek-chat": null,
   "qwen-plus": null,
   "qwen-vl-ocr": null,
+  "hunyuan-turbo": null,
 };
 
 // 获取或创建客户端实例

@@ -47,13 +47,14 @@ const Home: NextPage = () => {
             }}
             defaultValue="qwen-plus"
           >
-            <SelectTrigger className="w-full bg-white border border-gray-300 rounded-md py-2 px-3 shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500">
+            <SelectTrigger>
               <SelectValue placeholder="模型选择" />
             </SelectTrigger>
             <SelectContent className="border border-gray-300 rounded-md shadow-lg">
               <SelectGroup>
-                <SelectItem value="deepseek-chat">Deepseek</SelectItem>
+                <SelectItem value="deepseek-chat">DeepSeek</SelectItem>
                 <SelectItem value="qwen-plus">通义千问</SelectItem>
+                <SelectItem value="hunyuan-turbo">混元</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
@@ -62,15 +63,21 @@ const Home: NextPage = () => {
 
       {/* 输入框和按钮区域 */}
       <div className="flex items-center space-x-4 mb-8">
-        <Input
-          onChange={(evt) => {
-            setValue(evt.target?.value);
-          }}
-          placeholder="请输入问题"
-        />
-        <Button disabled={loading || !value} onClick={handleFetchData}>
-          {loading ? "生成中，请稍等。。。" : "获取答案"}
-        </Button>
+        <form onSubmit={handleFetchData} className="flex-1 flex space-x-4">
+          <Input
+            onChange={(evt) => {
+              setValue(evt.target?.value);
+            }}
+            placeholder="请输入问题"
+          />
+          <Button
+            disabled={loading || !value}
+            onClick={handleFetchData}
+            type="submit"
+          >
+            {loading ? "生成中，请稍等。。。" : "获取答案"}
+          </Button>
+        </form>
       </div>
 
       {/* 答案展示区域 */}
