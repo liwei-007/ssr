@@ -27,7 +27,11 @@ const Home: NextPage = () => {
   const handleFetchData = async () => {
     setLoading(true);
     setMessage("");
-    await getAnswerContent(value, model, onMessageChunk);
+    await getAnswerContent({
+      input: value,
+      model,
+      onMessageChunk,
+    });
     setLoading(false);
   };
 
@@ -62,7 +66,6 @@ const Home: NextPage = () => {
           onChange={(evt) => {
             setValue(evt.target?.value);
           }}
-          className="flex-1 bg-white border border-gray-300 rounded-md py-2 px-3 shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
           placeholder="请输入问题"
         />
         <Button disabled={loading || !value} onClick={handleFetchData}>
@@ -132,6 +135,15 @@ const Home: NextPage = () => {
               >
                 <span className="block text-2xl mb-2">🎬</span>
                 海报生成
+              </Link>
+            </li>
+            <li className="flex-1">
+              <Link
+                href="/ocr"
+                className="block bg-white border border-gray-300 rounded-md py-4 px-6 text-center text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-amber-300"
+              >
+                <span className="block text-2xl mb-2">ocr</span>
+                图像文字提取
               </Link>
             </li>
           </ul>

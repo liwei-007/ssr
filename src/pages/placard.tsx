@@ -32,7 +32,8 @@ const FormSchema = z.object({
     .max(30),
   sub_title: z.string().max(30),
   body_text: z.string().max(50),
-  // prompt_text_zh: z.string().max(50),
+  prompt_text_zh: z.string().max(50),
+  lora_name: z.string(),
   wh_ratios: z.string(),
 });
 
@@ -43,7 +44,8 @@ const ImageSearch: React.FC = () => {
       title: "",
       sub_title: "",
       body_text: "",
-      // prompt_text_zh: "提示词",
+      prompt_text_zh: "无",
+      lora_name: "童话油画",
       wh_ratios: "竖版",
     },
   });
@@ -58,7 +60,6 @@ const ImageSearch: React.FC = () => {
       body: JSON.stringify({
         input: {
           ...data,
-          prompt_text_zh: "中文",
           lora_weight: 0.8,
           ctrl_ratio: 0.7,
           ctrl_step: 0.7,
@@ -126,7 +127,7 @@ const ImageSearch: React.FC = () => {
               </FormItem>
             )}
           />
-          {/* <FormField
+          <FormField
             control={form.control}
             name="prompt_text_zh"
             render={({ field }) => (
@@ -138,7 +139,41 @@ const ImageSearch: React.FC = () => {
                 <FormMessage />
               </FormItem>
             )}
-          /> */}
+          />
+          <FormField
+            control={form.control}
+            name="lora_name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>选择风格</FormLabel>
+
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="选择风格" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="2D插画1">2D插画1</SelectItem>
+                    <SelectItem value="透明玻璃">透明玻璃</SelectItem>
+                    <SelectItem value="剪纸工艺">剪纸工艺</SelectItem>
+                    <SelectItem value="折纸工艺">折纸工艺</SelectItem>
+                    <SelectItem value="中国水墨">中国水墨</SelectItem>
+                    <SelectItem value="中国刺绣">中国刺绣</SelectItem>
+                    <SelectItem value="真实场景">真实场景</SelectItem>
+                    <SelectItem value="2D卡通">2D卡通</SelectItem>
+                    <SelectItem value="儿童水彩">儿童水彩</SelectItem>
+                    <SelectItem value="童话油画">童话油画</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="wh_ratios"

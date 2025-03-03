@@ -13,7 +13,7 @@ const handler = async (
   if (req?.method == "POST") {
     try {
       const jsonData = JSON.parse(req?.body);
-      console.log(111111, req?.body);
+
       try {
         // 发送初始的文本到图像合成请求
         const response = await request.post<{ output: { task_id: string } }>(
@@ -29,8 +29,6 @@ const handler = async (
             },
           }
         );
-
-        console.log(2222, response?.output);
 
         // 检查是否成功获取任务 ID
         if (response?.output?.task_id) {
