@@ -49,47 +49,12 @@ const Home: NextPage = () => {
     },
   };
 
-  const appOptions: SseOptions = {
-    url: "/api/app",
-    method: "POST",
-    headers: {
-      "Content-Type": "text/event-stream",
-    },
-    onMessage: (event) => {
-      const { data } = event;
-      try {
-        const validData = JSON.parse(data);
-        setMessage((prevAnswer) => prevAnswer + validData.Content);
-        if (validData?.IsDone) {
-          setLoading(false);
-        }
-        console.log("Received message:", JSON.parse(data));
-      } catch {}
-    },
-    onError: (error) => {
-      console.error("SSE error:", error);
-    },
-    onOpen: () => {
-      console.log("SSE connection opened");
-    },
-    onClose: () => {
-      console.log("SSE connection closed");
-    },
-  };
-
   const SseClientRef = useRef(new SseClient(options)).current;
-  const appSseClientRef = useRef(new SseClient(appOptions)).current;
 
   const handleFetchData = async () => {
     setLoading(true);
     setMessage("");
-    if (model === "generalv3.5") {
-      appSseClientRef.sendMessage({
-        input: value,
-        model,
-      });
-      return;
-    }
+
     SseClientRef.sendMessage({
       input: value,
       model,
