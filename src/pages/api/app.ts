@@ -97,6 +97,7 @@ export default async function handler(req: NextApiRequest, res: any) {
       });
 
       response.on("end", () => {
+        // 发送最终完整内容
         res.write(
           `data: ${JSON.stringify({ Content: "", IsDone: true })}\n\n `
         );
@@ -114,8 +115,6 @@ export default async function handler(req: NextApiRequest, res: any) {
         console.log("message=Unknown error");
       }
     }
-
-    // 发送最终完整内容
   } catch (error) {
     console.log("error:", error);
     res
