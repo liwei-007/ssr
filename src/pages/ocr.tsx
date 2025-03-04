@@ -10,7 +10,6 @@ const OCR: React.FC = () => {
   const [message, setMessage] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [loading, setLoading] = useState(false);
-  //   const ossHelper = new AliOSSHelper();
   const onMessageChunk = (chunk: string) => {
     setMessage((prevAnswer) => prevAnswer + chunk);
   };
