@@ -15,7 +15,6 @@ const OCR: React.FC = () => {
   };
   const handleFileChange = async (file: any) => {
     if (file) {
-      console.log("接收到的文件:", file);
       const base64 = await fileToDataUrl(file);
       setImageUrl(base64);
       setLoading(true);
