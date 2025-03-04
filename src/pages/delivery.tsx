@@ -1,7 +1,7 @@
 import ReactMarkdown from "@/components/markdown/ReactMarkdown";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 
 import { SseClient, SseOptions } from "@/utils/sse";
 
@@ -12,23 +12,17 @@ const ImageSearch: React.FC = () => {
 
   // 配置 SSE 请求选项
   const options: SseOptions = {
-    url: "https://dashscope.aliyuncs.com/api/v1/apps/d7045172f58049279283515fa53f98bd/completion",
+    url: "/api/app",
     method: "POST",
-    params: {
-      input: {
-        prompt: `查询完整的物流信息 ${searchQuery}，只返回物流详情`,
-      },
-    },
     headers: {
-      Authorization: "Bearer Bearer sk-a617d9a5934742f692defb0d8d7b6782",
       "Content-Type": "application/json",
     },
     onMessage: (event) => {
       const { data } = event;
       try {
-        const validData = JSON.parse(data)?.output;
-        setMessage(validData?.text);
-        if (validData?.finish_reason === "stop") {
+        const validData = JSON.parse(data);
+        setMessage((preMessage) => preMessage + validData?.Content);
+        if (validData?.IsDone) {
           setLoading(false);
         }
         console.log("Received message:", JSON.parse(data));
@@ -45,12 +39,18 @@ const ImageSearch: React.FC = () => {
     },
   };
 
+  const SseClientRef = useRef(new SseClient(options)).current;
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setMessage("");
-    // 创建 SSE 客户端实例，自动建立连接
-    new SseClient(options);
+    SseClientRef.sendMessage({
+      input: {
+        prompt: `查询完整的物流信息 ${searchQuery}，只返回物流详情`,
+      },
+      model: "qwen-plus",
+    });
   };
 
   return (

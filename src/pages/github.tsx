@@ -1,7 +1,7 @@
 import ReactMarkdown from "@/components/markdown/ReactMarkdown";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 
 import { SseClient, SseOptions } from "@/utils/sse";
 
@@ -12,23 +12,17 @@ const GitHubSearch: React.FC = () => {
 
   // 配置 SSE 请求选项
   const options: SseOptions = {
-    url: "https://dashscope.aliyuncs.com/api/v1/apps/d7045172f58049279283515fa53f98bd/completion",
+    url: "/api/app",
     method: "POST",
-    params: {
-      input: {
-        prompt: `以 markdown 列表带样式的形式输出 github 搜索列表 { keyword: ${searchQuery} }，只包含列表部分并且链接处加粗展示`,
-      },
-    },
     headers: {
-      Authorization: "Bearer Bearer sk-a617d9a5934742f692defb0d8d7b6782",
       "Content-Type": "application/json",
     },
     onMessage: (event) => {
       const { data } = event;
       try {
-        const validData = JSON.parse(data)?.output;
-        setMessage(validData?.text);
-        if (validData?.finish_reason === "stop") {
+        const validData = JSON.parse(data);
+        setMessage((preMessage) => preMessage + validData?.Content);
+        if (validData?.IsDone) {
           setLoading(false);
         }
         console.log("Received message:", JSON.parse(data));
@@ -45,12 +39,18 @@ const GitHubSearch: React.FC = () => {
     },
   };
 
+  const SseClientRef = useRef(new SseClient(options)).current;
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setMessage("");
-    // 创建 SSE 客户端实例，自动建立连接
-    new SseClient(options);
+    SseClientRef.sendMessage({
+      input: {
+        prompt: `以 markdown 列表带样式的形式输出 github 搜索列表 { keyword: ${searchQuery} }，只包含列表部分并且链接处加粗展示`,
+      },
+      model: "qwen-plus",
+    });
   };
 
   return (
@@ -61,13 +61,8 @@ const GitHubSearch: React.FC = () => {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="请输入关键词"
-          className="w-96 border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
         />
-        <Button
-          disabled={!searchQuery || loading}
-          type="submit"
-          className="bg-blue-500 text-white rounded-md px-6 py-2 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
-        >
+        <Button disabled={!searchQuery || loading} type="submit">
           {loading ? "查询中，请稍后..." : "提交"}
         </Button>
       </form>

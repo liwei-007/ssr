@@ -1,9 +1,9 @@
 import type { NextPage } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { getAnswerContent, type ModelType } from "@/utils/api";
+import { type ModelType } from "@/utils/api";
 import ReactMarkdown from "@/components/markdown/ReactMarkdown";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { SseClient, SseOptions } from "@/utils/sse";
 
 const Home: NextPage = () => {
   const [message, setMessage] = useState("");
@@ -20,19 +21,79 @@ const Home: NextPage = () => {
   const [value, setValue] = useState("");
   const [model, setModel] = useState<ModelType>("qwen-plus");
 
-  const onMessageChunk = (chunk: string) => {
-    setMessage((prevAnswer) => prevAnswer + chunk);
+  const options: SseOptions = {
+    url: "/api/answer",
+    method: "POST",
+    headers: {
+      "Content-Type": "text/event-stream",
+    },
+    onMessage: (event) => {
+      const { data } = event;
+      try {
+        const validData = JSON.parse(data);
+        setMessage((prevAnswer) => prevAnswer + validData.Content);
+        if (validData?.IsDone) {
+          setLoading(false);
+        }
+        console.log("Received message:", JSON.parse(data));
+      } catch {}
+    },
+    onError: (error) => {
+      console.error("SSE error:", error);
+    },
+    onOpen: () => {
+      console.log("SSE connection opened");
+    },
+    onClose: () => {
+      console.log("SSE connection closed");
+    },
   };
+
+  const appOptions: SseOptions = {
+    url: "/api/app",
+    method: "POST",
+    headers: {
+      "Content-Type": "text/event-stream",
+    },
+    onMessage: (event) => {
+      const { data } = event;
+      try {
+        const validData = JSON.parse(data);
+        setMessage((prevAnswer) => prevAnswer + validData.Content);
+        if (validData?.IsDone) {
+          setLoading(false);
+        }
+        console.log("Received message:", JSON.parse(data));
+      } catch {}
+    },
+    onError: (error) => {
+      console.error("SSE error:", error);
+    },
+    onOpen: () => {
+      console.log("SSE connection opened");
+    },
+    onClose: () => {
+      console.log("SSE connection closed");
+    },
+  };
+
+  const SseClientRef = useRef(new SseClient(options)).current;
+  const appSseClientRef = useRef(new SseClient(appOptions)).current;
 
   const handleFetchData = async () => {
     setLoading(true);
     setMessage("");
-    await getAnswerContent({
+    if (model === "generalv3.5") {
+      appSseClientRef.sendMessage({
+        input: value,
+        model,
+      });
+      return;
+    }
+    SseClientRef.sendMessage({
       input: value,
       model,
-      onMessageChunk,
     });
-    setLoading(false);
   };
 
   return (
@@ -55,6 +116,7 @@ const Home: NextPage = () => {
                 <SelectItem value="deepseek-chat">DeepSeek</SelectItem>
                 <SelectItem value="qwen-plus">通义千问</SelectItem>
                 <SelectItem value="hunyuan-turbo">混元</SelectItem>
+                <SelectItem value="generalv3.5">星火</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
