@@ -3,7 +3,6 @@ import FileUploadButton from "@/components/ui/upload";
 import { getAnswerContent } from "@/utils/api";
 import { fileToDataUrl } from "@/utils/fileToDataUrl";
 import Image from "next/image";
-// import AliOSSHelper from "@/utils/oss";
 import { useState } from "react";
 
 const OCR: React.FC = () => {
