@@ -105,15 +105,15 @@ export default async function handler(req: NextApiRequest, res: any) {
       });
     } else {
       console.log("Request failed:");
-      if (response.data.request_id) {
-        console.log(`request_id=${response.data.request_id}`);
-      }
-      console.log(`code=${response.status}`);
-      if (response.data.message) {
-        console.log(`message=${response.data.message}`);
-      } else {
-        console.log("message=Unknown error");
-      }
+      //   if (response.data.request_id) {
+      //     console.log(`request_id=${response.data.request_id}`);
+      //   }
+      //   console.log(`code=${response.status}`);
+      //   if (response.data.message) {
+      //     console.log(`message=${response.data.message}`);
+      //   } else {
+      //     console.log("message=Unknown error");
+      //   }
     }
   } catch (error) {
     console.log("error:", error);
